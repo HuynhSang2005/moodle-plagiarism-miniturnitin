@@ -2,7 +2,8 @@ import { Router } from 'express';
 import { authMiddleware } from '../../middlewares/auth.middleware';
 import { validate } from '../../middlewares/validate.middleware';
 import { submitJobSchema } from '../../validators/job.validator';
-import { submitJobHandler } from '../../controllers/job.controller';
+import { submitJobHandler, getJobStatusHandler  } from '../../controllers/job.controller';
+
 
 const router = Router();
 
@@ -48,6 +49,51 @@ router.post(
   authMiddleware,
   validate(submitJobSchema),
   submitJobHandler
+);
+
+/** <-- THÊM ROUTE MỚI BẮT ĐẦU TỪ ĐÂY
+ * @openapi
+ * /api/v1/jobs/{jobId}:
+ * get:
+ * summary: Retrieve the status and result of a specific analysis job
+ * tags: [Jobs]
+ * security:
+ * - bearerAuth: []
+ * parameters:
+ * - in: path
+ * name: jobId
+ * required: true
+ * schema:
+ * type: string
+ * format: uuid
+ * description: The ID of the job to retrieve.
+ * responses:
+ * 200:
+ * description: Successfully retrieved job status.
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * id:
+ * type: string
+ * status:
+ * type: string
+ * enum: [queued, processing, completed, error]
+ * score:
+ * type: integer
+ * result:
+ * type: string
+ * createdAt:
+ * type: string
+ * format: date-time
+ * 404:
+ * description: Job not found.
+ */
+router.get(
+  '/:jobId',
+  authMiddleware,
+  getJobStatusHandler
 );
 
 export default router;

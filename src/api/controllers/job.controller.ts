@@ -30,4 +30,52 @@ export const submitJobHandler = async (req: Request, res: Response) => {
     console.error('Failed to create job:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
+
+};
+
+// const { jobId } = req.params;
+
+//   try {
+//     // Tìm job trong CSDL bằng jobId
+//     const query = db.query(`SELECT * FROM jobs WHERE id = ?`);
+//     const job = query.get(jobId);
+
+//     if (!job) {
+//       return res.status(404).json({ message: 'Job not found' });
+//     }
+
+//     // Trả về thông tin của job nếu tìm thấy
+//     return res.status(200).json(job);
+
+//   } catch (error) {
+//     console.error('Failed to get job status:', error);
+//     return res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// };
+
+export const getJobStatusHandler = async (req: Request, res: Response) => {
+  const { jobId } = req.params;
+
+  // Thêm bước kiểm tra này
+  if (!jobId) {
+    return res.status(400).json({ message: 'Job ID is required' });
+  }
+
+  try {
+    // Tìm job trong CSDL bằng jobId
+    const query = db.query(`SELECT * FROM jobs WHERE id = ?`);
+    // Sử dụng query.get để lấy job theo ID
+    const job = query.get(jobId);
+
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found' });
+    }
+
+    // Trả về thông tin của job nếu tìm thấy
+    return res.status(200).json(job);
+
+  } catch (error) {
+    console.error('Failed to get job status:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
 };

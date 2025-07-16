@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="plagiarism/miniturnitin/db" VERSION="20240716" COMMENT="XMLDB file for Moodle plagiarism_miniturnitin"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="plagiarism_miniturnitin_files" COMMENT="Stores the status of files sent for plagiarism check">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="ID of the submission in Moodle"/>
+        <FIELD NAME="jobid" TYPE="char" LENGTH="36" NOTNULL="true" COMMENT="Job ID returned by the API"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="queued" COMMENT="queued, processing, completed, error"/>
+        <FIELD NAME="score" TYPE="int" LENGTH="3" NOTNULL="false" COMMENT="The final similarity score"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="submissionid_uk" TYPE="unique" FIELDS="submissionid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="jobid_ix" UNIQUE="false" FIELDS="jobid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

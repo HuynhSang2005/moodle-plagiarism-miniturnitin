@@ -2,6 +2,8 @@ import { type Request, type Response } from 'express';
 import { randomUUID } from 'crypto';
 import db from '../../services/db.service';
 
+import { processPlagiarismCheck } from '../../services/plagiarism.service';
+
 export const submitJobHandler = async (req: Request, res: Response) => {
   const { text } = req.body;
   const jobId = randomUUID();
@@ -14,10 +16,10 @@ export const submitJobHandler = async (req: Request, res: Response) => {
     jobQuery.run(jobId);
 
     // Thêm nội dung văn bản vào bảng submissions
-    const submissionQuery = db.query(
-      `INSERT INTO submissions (content) VALUES (?)`
-    );
-    submissionQuery.run(text);
+    db.query(`INSERT INTO submissions (content) VALUES (?)`).run(text);
+
+    // Bắt đầu xử lý job trong nền (không đợi)
+    processPlagiarismCheck(jobId, text); 
 
     // Phản hồi ngay lập tức với 202 (Accepted) và jobId
     // cho client biết yêu cầu đã được chấp nhận và đang được xử lý
@@ -32,26 +34,6 @@ export const submitJobHandler = async (req: Request, res: Response) => {
   }
 
 };
-
-// const { jobId } = req.params;
-
-//   try {
-//     // Tìm job trong CSDL bằng jobId
-//     const query = db.query(`SELECT * FROM jobs WHERE id = ?`);
-//     const job = query.get(jobId);
-
-//     if (!job) {
-//       return res.status(404).json({ message: 'Job not found' });
-//     }
-
-//     // Trả về thông tin của job nếu tìm thấy
-//     return res.status(200).json(job);
-
-//   } catch (error) {
-//     console.error('Failed to get job status:', error);
-//     return res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// };
 
 export const getJobStatusHandler = async (req: Request, res: Response) => {
   const { jobId } = req.params;

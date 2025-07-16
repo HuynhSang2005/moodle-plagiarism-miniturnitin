@@ -1,0 +1,21 @@
+{
+    "name": "huynhsang/miniturnitin",
+    "description": "Moodle plagiarism plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Huynh Sang"
+        }
+    ],
+    "require": {
+        "smalot/pdfparser": "^2.1",
+        "phpoffice/phpword": "^1.2"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4.0"
+        },
+        "optimize-autoloader": true,
+        "classmap-authoritative": true
+    }
+}

@@ -9,37 +9,29 @@ defined('MOODLE_INTERNAL') || die();
  * @return string Đoạn mã HTML để hiển thị.
  */
 function plagiarism_miniturnitin_get_links($file_record) {
-    global $DB;
+    global $DB, $OUTPUT;
 
-    // Lấy submission ID từ đối tượng file_record
-    // itemid trong context này chính là submission id.
     $submissionid = $file_record->itemid;
-
-    // Tìm trạng thái của file này trong bảng CSDL của chúng ta
     $our_record = $DB->get_record('plagiarism_miniturnitin_files', ['submissionid' => $submissionid]);
 
     if (!$our_record) {
-        // Không có thông tin gì về file này
         return '';
     }
     
-    // Dựa vào trạng thái để trả về HTML tương ứng
     switch ($our_record->status) {
         case 'queued':
         case 'processing':
-            // Hiển thị icon loading và text "Pending"
             $spinner = new \core\output\spinner();
             return $spinner->get_html() . ' Pending...';
 
         case 'error':
-            // Hiển thị icon lỗi
-            $error_icon = new \core\output\pix_icon('t/delete', 'Error in processing');
-            return $error_icon->render();
+            $error_icon = $OUTPUT->pix_icon('t/delete', 'Error in processing');
+            return $OUTPUT->render($error_icon);
             
         case 'completed':
-            // Hiển thị điểm số với màu sắc
+            // SỬA ĐỔI TẠI ĐÂY
             $score = (int)$our_record->score;
-            $color = '#28a745'; // Xanh lá (Mặc định)
+            $color = '#28a745'; // Xanh lá
             if ($score > 25) {
                 $color = '#ffc107'; // Vàng
             }
@@ -47,13 +39,16 @@ function plagiarism_miniturnitin_get_links($file_record) {
                 $color = '#dc3545'; // Đỏ
             }
             
-            // TODO: Tạo link đến một trang báo cáo chi tiết
+            // Tạo link đến trang báo cáo chi tiết
             $report_link = new \moodle_url('/plagiarism/miniturnitin/report.php', ['id' => $our_record->id]);
             
             $style = "font-weight: bold; color: {$color}; padding: 2px 6px; border-radius: 4px; background-color: #f8f9fa;";
             
-            // Tạm thời chỉ hiển thị điểm số, chưa có link
-            return "<span style='{$style}'>{$score}%</span>";
+            // Tạo thẻ span chứa điểm số
+            $score_html = html_writer::tag('span', "{$score}%", ['style' => $style]);
+            
+            // Trả về một thẻ <a> bao quanh điểm số
+            return html_writer::link($report_link, $score_html, ['title' => 'View similarity report']);
             
         default:
             return '';

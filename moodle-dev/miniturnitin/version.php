@@ -6,3 +6,5 @@ $plugin->version   = 2024071600; // Phiên bản YYYYMMDDXX
 $plugin->requires  = 2022041200;
 $plugin->maturity  = MATURITY_ALPHA;
 $plugin->release   = 'v1.0-alpha';
+
+require_once(__DIR__ . '/vendor/autoload.php');

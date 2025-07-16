@@ -5,7 +5,6 @@ import v1Router from './api/routes/v1';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use('/api/v1', v1Router); 
 
 // Initialize database
 initializeDB();
@@ -17,6 +16,8 @@ app.use(express.json());
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', message: 'API is running' });
 });
+
+app.use('/api/v1', v1Router); 
 
 app.listen(PORT, () => {
   console.log(`🚀 API server is listening on http://localhost:${PORT}`);
